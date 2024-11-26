@@ -1,0 +1,6 @@
+.custom-button {
+    -fx-background-color: lightblue;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
