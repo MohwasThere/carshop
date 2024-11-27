@@ -24,9 +24,6 @@ public class Listings {
     private Button searchButton;
 
     @FXML
-    private HBox card;
-
-    @FXML
     private AnchorPane layout;
 
     @FXML
@@ -51,7 +48,7 @@ public class Listings {
                 int price = resultSet.getInt("price");
                 String model = model_name + " " + yom + " " + transmission;
                 Card card = new Card(i++);
-                layout.getChildren().add(card.create("Icon.png", company, model, hp, nm, price));
+                layout.getChildren().add(card.create("porsche.jpg", company, model, hp, nm, price));
 
             }
             resultSet.close();
@@ -61,8 +58,6 @@ public class Listings {
             System.out.println("Failed to connect to MySQL database");
             e.printStackTrace();
         }
-        Card card = new Card(1);
-        layout.getChildren().add(card.create("Icon.png", "mercedes", "benz", 200, 200, 200));
     }
 
 }

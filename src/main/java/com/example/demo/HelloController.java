@@ -126,8 +126,11 @@ public class HelloController {
         scaleTransition.setAutoReverse(true);
         scaleTransition.play();
         if(checkuser() && checkpass()) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("main7ambola.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/listings.fxml"));
 
+            if (loader.getLocation() == null) {
+                System.out.println("FXML file not found!");
+            }
             // Get the current stage (window)
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
 
