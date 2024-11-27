@@ -21,7 +21,7 @@ public class HelloApplication extends Application {
         Scene LoginScene = new Scene(fxmlLoader.load(), 1080, 600);
         stage.setTitle("CarShop");
         stage.setScene(LoginScene);
-
+        stage.setResizable(false);
 
         stage.show();
 

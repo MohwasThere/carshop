@@ -4,10 +4,10 @@ import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.layout.CornerRadii;
@@ -48,7 +48,7 @@ public class HelloController {
     @FXML
     private TextField user;
     @FXML
-    private TextField pass;
+    private PasswordField pass;
     @FXML
     private Rectangle rect;
     @FXML
@@ -126,7 +126,7 @@ public class HelloController {
         scaleTransition.setAutoReverse(true);
         scaleTransition.play();
         if(checkuser() && checkpass()) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("main7ambola.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("listings.fxml"));
 
             // Get the current stage (window)
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
