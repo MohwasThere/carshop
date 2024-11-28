@@ -1,34 +1,26 @@
 package back;
 
-public class vehicle
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+
+public interface vehicle
 {
-    private int v_id;
-    private int model_id;
-    private int yom;
-    private int price;
-    private String type;
+    String company = "";
+    String model_name = "";
+    String yom = "";
+    String transmission = "";
+    int hp = 0;
+    int nm = 0;
+    int price = 0;
 
-    public int getV_id(){
-        return this.v_id;
-    }
-    public String getType(){return this.type;}
-    public int getModel_id(){
-        return this.model_id;
-    }
-    public int getYom(){
-        return this.yom;
-    }
-    public int getPrice(){ return this.price; }
-
-
-    vehicle(int v_id, int model_id, int yom, int price, String type) {
-        this.v_id = v_id;
-        this.model_id = model_id;
-        this.yom = yom;
-        this.price = price;
-        this.type = type;
-    }
-
-
+    String getcompany();
+    String getmodel_name();
+    String getyom();
+    String gettransmission();
+    int gethp();
+    int getnm();
+    int getprice();
 }
 

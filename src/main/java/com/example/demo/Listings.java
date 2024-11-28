@@ -1,44 +1,81 @@
 package com.example.demo;
 
+import back.car;
+import back.motorcycle;
+import back.vehicle;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.sql.*;
+import java.util.ArrayList;
 
+import static java.beans.Beans.isInstanceOf;
 import static javafx.scene.shape.StrokeType.OUTSIDE;
 
 public class Listings {
     @FXML
-    private TextField searchFeild;
-
-    @FXML
-    private Button searchButton;
+    private VBox container;
 
     @FXML
     private AnchorPane layout;
 
     @FXML
     public void initialize(){
+        ArrayList<vehicle> vehicles = storeData();
+        displayData(vehicles);
+    }
+
+    @FXML
+    private Slider maxprice;
+
+    @FXML
+    private Slider minnm;
+
+    @FXML
+    private Slider minhp;
+
+    @FXML
+    private TextField com;
+
+    private void displayData(ArrayList<vehicle> vehicles){
+        container.getChildren().clear();
+        double noi = 1;
+        for (vehicle vehicl : vehicles) {
+            String model = vehicl.getmodel_name() + " " + vehicl.getyom() + " " + vehicl.gettransmission();
+            Card card = new Card(noi);
+            container.getChildren().add(card.create("porsche.jpg", vehicl.getcompany(), model, vehicl.gethp(), vehicl.getnm(), vehicl.getprice()));
+            noi++;
+        }
+    }
+
+    private ArrayList<vehicle> storeData(){
         String host = "jdbc:mysql://localhost:3306/carshop";
         String username = "root";
         String password = "password";
         try {
             Connection conn = DriverManager.getConnection(host, username, password);
             System.out.println("Connected to MySQL database");
-            String sql = "SELECT companies.name, model_name, yom, transmission, hp, nm, price FROM companies join (model join vehicle on model.model_id = vehicle.model_id) on companies.maker_id = model.maker_id";
+            String sql = "SELECT type, companies.name, model_name, yom, transmission, hp, nm, price FROM companies join (model join vehicle on model.model_id = vehicle.model_id) on companies.maker_id = model.maker_id";
             Statement statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             int i = 1;
+            ArrayList<vehicle> vehicles = new ArrayList<>();
             while (resultSet.next()) {
+                String type = resultSet.getString("type");
                 String company = resultSet.getString("name");
                 String model_name = resultSet.getString("model_name");
                 String yom = resultSet.getString("yom");
@@ -46,19 +83,62 @@ public class Listings {
                 int hp = resultSet.getInt("hp");
                 int nm = resultSet.getInt("nm");
                 int price = resultSet.getInt("price");
-                String model = model_name + " " + yom + " " + transmission;
-                Card card = new Card(i++);
-                layout.getChildren().add(card.create("porsche.jpg", company, model, hp, nm, price));
-
+                if(type.equals("Car")){
+                    vehicles.add(new car(company, model_name, yom, transmission, hp, nm, price));
+                } else if (type.equals("Motorcycle")){
+                    vehicles.add(new motorcycle(company, model_name, yom, transmission, hp, nm, price));
+                }
             }
             resultSet.close();
             statement.close();
             conn.close();
+            return vehicles;
         } catch (SQLException e) {
             System.out.println("Failed to connect to MySQL database");
             e.printStackTrace();
+            return null;
         }
     }
+
+    public void handlecar() {
+        ArrayList<vehicle> vehicles = storeData();
+        ArrayList<vehicle> cars = new ArrayList<>();
+        for (vehicle vehicl : vehicles) {
+            if(vehicl instanceof car){
+                cars.add(vehicl);
+            }
+        }
+        displayData(cars);
+    }
+
+    public void handlemotorcycle() {
+        ArrayList<vehicle> vehicles = storeData();
+        ArrayList<vehicle> motorcycles = new ArrayList<>();
+        for (vehicle vehicl : vehicles) {
+            if(vehicl instanceof motorcycle){
+                motorcycles.add(vehicl);
+            }
+        }
+        displayData(motorcycles);
+    }
+
+    public void handlefilters() {
+        ArrayList<vehicle> vehicles = storeData();
+        ArrayList<vehicle> filtered = new ArrayList<>();
+        for (vehicle vehicl : vehicles) {
+            if(vehicl.getprice() <= maxprice.getValue()){
+                if(vehicl.getnm() >= minnm.getValue()){
+                    if(vehicl.gethp() >= minhp.getValue()){
+                        if(com.getText().isEmpty() || vehicl.getcompany().toLowerCase().equals(com.getText().toLowerCase())){
+                            filtered.add(vehicl);
+                        }
+                    }
+                }
+            }
+        }
+        displayData(filtered);
+    }
+
 
 }
 
@@ -107,13 +187,11 @@ class Card{
         cardVBox.getChildren().addAll(this.company, this.model, this.hp, this.nm);
         this.price = new Text("" + price);
         this.card.setAlignment(Pos.CENTER_LEFT);
-        this.card.setLayoutX(167);
-        this.card.setLayoutY(185.0 + ((noi-1) * 110));
+        this.card.effectProperty().set(new DropShadow(10, new Color(0.7058823704719543, 0.7215686440467834, 0.6705882549285889, 1)));
         this.card.setPrefHeight(100);
         this.card.setPrefWidth(600);
         this.card.setStyle("-fx-border-color: #B4B8AB; -fx-background-radius: 20px; -fx-border-radius: 20px; -fx-background-color: white; -fx-padding: 0 20 0 20;");
         this.card.getChildren().addAll(image, cardVBox, this.price);
         return this.card;
     }
-
 }
