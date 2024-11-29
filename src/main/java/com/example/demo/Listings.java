@@ -3,8 +3,11 @@ package com.example.demo;
 import back.car;
 import back.motorcycle;
 import back.vehicle;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
@@ -19,7 +22,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -57,7 +62,7 @@ public class Listings {
         for (vehicle vehicl : vehicles) {
             String model = vehicl.getmodel_name() + " " + vehicl.getyom() + " " + vehicl.gettransmission();
             Card card = new Card(noi);
-            container.getChildren().add(card.create("porsche.jpg", vehicl.getcompany(), model, vehicl.gethp(), vehicl.getnm(), vehicl.getprice()));
+            container.getChildren().add(card.create("Images/porsche.jpg", vehicl.getcompany(), model, vehicl.gethp(), vehicl.getnm(), vehicl.getprice()));
             noi++;
         }
     }
@@ -140,6 +145,17 @@ public class Listings {
     }
 
 
+    public void switchInvoice(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("main7ambola.fxml"));
+
+        // Get the current stage (window)
+        Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+        // Set the new scene and show it
+        Scene MainMenu = new Scene(loader.load(), 1080, 600);
+        stage.setScene(MainMenu);
+        stage.show();
+    }
 }
 
 class Card{
@@ -194,4 +210,5 @@ class Card{
         this.card.getChildren().addAll(image, cardVBox, this.price);
         return this.card;
     }
+
 }

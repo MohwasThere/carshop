@@ -31,6 +31,9 @@ public class HelloController {
     @FXML
     private ChoiceBox<String> myChoiceBox;
 
+
+    public static String user_name;
+
     public HelloController() throws SQLException {
     }
 
@@ -138,6 +141,7 @@ public class HelloController {
             Scene MainMenu = new Scene(loader.load(), 1080, 600);
             stage.setScene(MainMenu);
             stage.show();
+            this.user_name = user.getText();
         }
         else
             System.out.println("SAD SHIT");
@@ -149,4 +153,5 @@ public class HelloController {
     public void hoverOut(){
         Login.setStyle("-fx-background-color: #284B63; -fx-border-color: #153243; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-width: 1px;");
     }
+
 }
