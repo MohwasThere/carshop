@@ -1,7 +1,6 @@
 package back;
 
 public class invoice {
-    private int v_id;
     private int buyer_ssn;
     private String desc;
     private int seller_id;
@@ -9,10 +8,6 @@ public class invoice {
     private int order_id;
     private int price;
 
-    public int getV_id()
-    {
-        return this.v_id;
-    }
 
     public int getBuyer_ssn()
     {
@@ -40,11 +35,10 @@ public class invoice {
         return this.order_id;
     }
 
-    public invoice(int order_id,int buyer_ssn,String buyer_name,int v_id,int seller_id,int price) {
+    public invoice(int order_id,int buyer_ssn,String buyer_name,int seller_id,int price) {
         this.order_id = order_id;
         this.buyer_ssn = buyer_ssn;
         this.buyer_name = buyer_name;
-        this.v_id = v_id;
         this.seller_id = seller_id;
         this.price = price;
 

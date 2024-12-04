@@ -30,12 +30,11 @@
             <Point3D />
          </rotationAxis>
       </HBox>
-      <TableView fx:id="pot_buyer_table" editable="true" layoutX="14.0" layoutY="18.0" onMouseEntered="#FillData" prefHeight="243.0" prefWidth="688.0">
+      <TableView fx:id="pot_buyer_table" editable="true" layoutX="14.0" layoutY="18.0" prefHeight="243.0" prefWidth="688.0">
         <columns>
             <TableColumn fx:id="pot_OID" prefWidth="75.0" text="Order_ID" />
           <TableColumn fx:id="pot_buy_ssn" prefWidth="75.0" text="Buyer_ssn" />
           <TableColumn fx:id="pot_buy_name" prefWidth="99.0" text="Buyer Name" />
-            <TableColumn fx:id="pot_MID" prefWidth="89.0" text="Model_ID" />
             <TableColumn fx:id="pot_SID" prefWidth="75.0" text="Seller_ID" />
             <TableColumn fx:id="pot_pay" prefWidth="75.0" text="Payment" />
         </columns>
@@ -43,12 +42,11 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
-      <TableView fx:id="com_buyer" editable="true" layoutX="14.0" layoutY="282.0" prefHeight="243.0" prefWidth="688.0">
+      <TableView fx:id="com_buyer_table" editable="true" layoutX="14.0" layoutY="282.0" prefHeight="243.0" prefWidth="688.0">
          <columns>
             <TableColumn fx:id="com_OID" prefWidth="75.0" text="Order_ID" />
             <TableColumn fx:id="com_buy_ssn" prefWidth="75.0" text="Buyer_ssn" />
             <TableColumn fx:id="com_buy_name" prefWidth="99.0" text="Buyer Name" />
-            <TableColumn fx:id="com_MID" prefWidth="89.0" text="Model_ID" />
             <TableColumn fx:id="com_SID" prefWidth="75.0" text="Seller_ID" />
             <TableColumn fx:id="com_pay" prefWidth="75.0" text="Payment" />
          </columns>
@@ -57,12 +55,12 @@
          </columnResizePolicy>
       </TableView>
       
-      <Button fx:id="purchase" graphicTextGap="0.0" layoutX="763.0" layoutY="361.0" mnemonicParsing="false" onMouseEntered="#hoverInp" onMouseExited="#hoverOutp" prefHeight="33.0" prefWidth="288.0" style="-fx-background-color: #284B63; -fx-border-color: #153243; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-width: 1px;" text="Complete Purchase" textAlignment="CENTER" textFill="WHITE">
+      <Button fx:id="purchase" graphicTextGap="0.0" layoutX="763.0" layoutY="361.0" mnemonicParsing="false" onAction="#complete_purchase" onMouseEntered="#hoverInp" onMouseExited="#hoverOutp" prefHeight="33.0" prefWidth="288.0" style="-fx-background-color: #284B63; -fx-border-color: #153243; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-width: 1px;" text="Complete Purchase" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font size="21.0" />
          </font>
       </Button>
-      <Button fx:id="removal" graphicTextGap="0.0" layoutX="763.0" layoutY="454.0" mnemonicParsing="false" onMouseEntered="#hoverInr" onMouseExited="#hoverOutr" prefHeight="33.0" prefWidth="288.0" style="-fx-background-color: #284B63; -fx-border-color: #153243; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-width: 1px;" text="Remove Buyer" textAlignment="CENTER" textFill="WHITE">
+      <Button fx:id="removal" graphicTextGap="0.0" layoutX="763.0" layoutY="454.0" mnemonicParsing="false" onAction="#removal" onMouseEntered="#hoverInr" onMouseExited="#hoverOutr" prefHeight="33.0" prefWidth="288.0" style="-fx-background-color: #284B63; -fx-border-color: #153243; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-width: 1px;" text="Remove Invoice" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font size="21.0" />
          </font>

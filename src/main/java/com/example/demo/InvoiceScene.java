@@ -5,8 +5,10 @@ import back.invoice;
 import back.vehicle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
@@ -54,7 +56,7 @@ public class InvoiceScene
     private TableColumn pot_SID;
     //Complete Order Table
     @FXML
-    private  TableView com_buyer;
+    private  TableView com_buyer_table;
     @FXML
     private TableColumn com_OID;
     @FXML
@@ -68,6 +70,24 @@ public class InvoiceScene
     @FXML
     private TableColumn com_SID;
 
+    @FXML
+    public void initialize()
+    {
+        pot_OID.setCellValueFactory(new PropertyValueFactory<>("order_id"));
+        pot_buy_ssn.setCellValueFactory(new PropertyValueFactory<>("buyer_ssn"));
+        pot_buy_name.setCellValueFactory(new PropertyValueFactory<>("buyer_name"));
+
+        pot_SID.setCellValueFactory(new PropertyValueFactory<>("seller_id"));
+        pot_pay.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+        com_OID.setCellValueFactory(new PropertyValueFactory<>("order_id"));
+        com_buy_ssn.setCellValueFactory(new PropertyValueFactory<>("buyer_ssn"));
+        com_buy_name.setCellValueFactory(new PropertyValueFactory<>("buyer_name"));
+
+        com_SID.setCellValueFactory(new PropertyValueFactory<>("seller_id"));
+        com_pay.setCellValueFactory(new PropertyValueFactory<>("price"));
+    }
+
     public InvoiceScene() throws SQLException
     {
 
@@ -77,14 +97,13 @@ public class InvoiceScene
            try {
                Connection conn = DriverManager.getConnection(host, username, password);
                System.out.println("Connected to MySQL database");
-               String sql = "SELECT vehicle.v_id, invoice.buyer_ssn, buyer.first_name, buyer.last_name, invoice.order_id, seller.seller_id, vehicle.price FROM vehicle INNER JOIN invoice ON vehicle.v_id = invoice.v_id INNER JOIN buyer ON invoice.buyer_ssn = buyer.buyer_ssn INNER JOIN model ON vehicle.model_id = model.model_id INNER JOIN seller ON invoice.seller_id = seller.seller_id;";
+               String sql = "SELECT  invoice.buyer_ssn, buyer.first_name, buyer.last_name, invoice.order_id, seller.seller_id, vehicle.price FROM vehicle INNER JOIN invoice ON vehicle.v_id = invoice.v_id INNER JOIN buyer ON invoice.buyer_ssn = buyer.buyer_ssn INNER JOIN model ON vehicle.model_id = model.model_id INNER JOIN seller ON invoice.seller_id = seller.seller_id;";
                Statement statement = conn.createStatement();
                ResultSet resultSet = statement.executeQuery(sql);
                int i = 1;
                ArrayList<invoice> pot_buyers = new ArrayList<>();
                while(resultSet.next())
                {
-                   int v_id = resultSet.getInt("v_id");
                    int buyer_ssn = resultSet.getInt("buyer_ssn");
                    String first_name = resultSet.getString("first_name");
                    String last_name = resultSet.getString("last_name");
@@ -92,7 +111,7 @@ public class InvoiceScene
                    int seller_id = resultSet.getInt("seller_id");
                    int price = resultSet.getInt("price");
                    String name = first_name + " " + last_name;
-                   pot_buyers.add(new invoice(order_id,buyer_ssn,name,v_id,seller_id,price));
+                   pot_buyers.add(new invoice(order_id,buyer_ssn,name,seller_id,price));
                }
                resultSet.close();
                statement.close();
@@ -109,28 +128,87 @@ public class InvoiceScene
     public void FillData() throws SQLException {
         ArrayList<invoice> buyers = storeData();
         ObservableList<invoice> list = FXCollections.observableArrayList(buyers);
-        pot_OID.setCellValueFactory(new PropertyValueFactory<>("order_id"));
-        pot_buy_ssn.setCellValueFactory(new PropertyValueFactory<>("buyer_ssn"));
-        pot_buy_name.setCellValueFactory(new PropertyValueFactory<>("buyer_name"));
-        pot_MID.setCellValueFactory(new PropertyValueFactory<>("v_id"));
-        pot_SID.setCellValueFactory(new PropertyValueFactory<>("seller_id"));
-        pot_pay.setCellValueFactory(new PropertyValueFactory<>("price"));
 
         pot_buyer_table.setItems(list);
 
     }
 
-    public void complete_purchase() throws SQLException
-    {
+    public void complete_purchase() throws SQLException {
+        invoice com_buyer = (invoice) pot_buyer_table.getSelectionModel().getSelectedItem();
 
+        if (com_buyer != null) {
+            // Add selected item to the second TableView
+            com_buyer_table.getItems().add(com_buyer);
+
+            // Connect to the database
+            try (Connection conn = DriverManager.getConnection(host, username, password)) {
+                System.out.println("Connected to MySQL database");
+
+                // Start transaction
+                conn.setAutoCommit(false);
+
+                // Insert into Full_purchase table
+                String insertSQL = "INSERT INTO Full_purchase(order_id, buyer_ssn, name, seller_id, price) VALUES (?, ?, ?, ?, ?)";
+                try (PreparedStatement insertStmt = conn.prepareStatement(insertSQL)) {
+                    insertStmt.setInt(1, com_buyer.getOrder_id());
+                    insertStmt.setInt(2, com_buyer.getBuyer_ssn());
+                    insertStmt.setString(3, com_buyer.getBuyer_name());
+                    insertStmt.setInt(4, com_buyer.getSeller_id());
+                    insertStmt.setInt(5, com_buyer.getPrice());
+                    insertStmt.executeUpdate();
+
+                }
+
+                String deleteInvoiceSQL = "DELETE FROM invoice WHERE  order_id = " + com_buyer.getOrder_id()+ ";";
+                try (PreparedStatement deleteInvoiceStmt = conn.prepareStatement(deleteInvoiceSQL)) {
+//                    deleteInvoiceStmt.setInt(1, com_buyer.getOrder_id());
+                    deleteInvoiceStmt.executeUpdate();
+                }
+
+
+
+                // Commit transaction
+                conn.commit();
+
+                 //Remove the item from the first TableView
+                pot_buyer_table.getItems().remove(com_buyer);
+            } catch (SQLException ex) {
+                System.err.println("SQL Error: " + ex.getMessage());
+                throw ex;
+            }
+        } else {
+            System.out.println("No item selected.");
+        }
+    }
+
+    public void removal() throws SQLException
+    {
+        invoice com_buyer = (invoice) pot_buyer_table.getSelectionModel().getSelectedItem();
+
+        try (Connection conn = DriverManager.getConnection(host, username, password))
+        {
+            System.out.println("Connected to MySQL database");
+            conn.setAutoCommit(false);
+            String deleteInvoiceSQL = "DELETE FROM invoice WHERE  order_id = " + com_buyer.getOrder_id() + ";";
+            try (PreparedStatement deleteInvoiceStmt = conn.prepareStatement(deleteInvoiceSQL)) {
+//                    deleteInvoiceStmt.setInt(1, com_buyer.getOrder_id());
+                deleteInvoiceStmt.executeUpdate();
+            } catch (SQLException ex) {
+                System.err.println("SQL Error: " + ex.getMessage());
+                throw ex;
+            }
+            conn.commit();
+
+        }
+        FillData();
     }
 
 
-    public void switchCar(javafx.event.ActionEvent event) throws IOException {
+    public void switchCar(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("listings.fxml"));
 
         // Get the current stage (window)
-        Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
         // Set the new scene and show it
         Scene MainMenu = new Scene(loader.load(), 1080, 600);
@@ -138,11 +216,11 @@ public class InvoiceScene
         stage.show();
     }
 
-    public void switchMotor(javafx.event.ActionEvent event) throws IOException {
+    public void switchMotor(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("listings.fxml"));
 
         // Get the current stage (window)
-        Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
         // Set the new scene and show it
         Scene MainMenu = new Scene(loader.load(), 1080, 600);
