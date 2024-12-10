@@ -14,6 +14,7 @@ public interface vehicle
     int hp = 0;
     int nm = 0;
     int price = 0;
+    int v_id = 0;
 
     String getcompany();
     String getmodel_name();
@@ -22,5 +23,7 @@ public interface vehicle
     int gethp();
     int getnm();
     int getprice();
+    int getv_id();
+
 }
 

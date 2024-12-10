@@ -15,7 +15,7 @@ class MySQLConnection {
 //            String Query = "SELECT * FROM buyer WHERE first_name = Micheal;";
 //            ResultSet rs = conn.createStatement().executeQuery(Query);
 //
-            String sql = "SELECT * FROM companies where maker_id = 1";
+            String sql = "SELECT * FROM company where maker_id = 1";
             // Example SQL query
             Statement statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);

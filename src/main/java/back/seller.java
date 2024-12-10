@@ -5,6 +5,7 @@ public class seller {
     private String first_name;
     private String last_name;
     private int salary;
+    public static seller currentSeller;
 
     public int getSeller_id() {
         return seller_id;
@@ -21,7 +22,7 @@ public class seller {
         return this.salary;
     }
 
-    seller(int seller_id, String first_name, String last_name, int salary) {
+    public seller(int seller_id, String first_name, String last_name, int salary) {
         this.seller_id = seller_id;
         this.first_name = first_name;
         this.last_name = last_name;

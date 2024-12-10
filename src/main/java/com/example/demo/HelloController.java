@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import back.seller;
 import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -56,6 +57,8 @@ public class HelloController {
     private Rectangle rect;
     @FXML
     private Button Login;
+
+
 
     public boolean checkuser() throws SQLException {
         Connection connection = DriverManager.getConnection(host, username, password);
@@ -120,15 +123,16 @@ public class HelloController {
 
     public void handleLogin(javafx.event.ActionEvent event) throws IOException, SQLException {
         // Load the second scene (Scene2.fxml)
-        ScaleTransition scaleTransition = new ScaleTransition();
-        scaleTransition.setNode(Login);
-        scaleTransition.setByX(-0.05);
-        scaleTransition.setByY(-0.05);
-        scaleTransition.setCycleCount(2);
-        scaleTransition.setDuration(javafx.util.Duration.seconds(0.15));
-        scaleTransition.setAutoReverse(true);
-        scaleTransition.play();
+        SellingPage.clickAnimation(Login);
         if(checkuser() && checkpass()) {
+            Connection connection = DriverManager.getConnection(host, username, password);
+
+            // 2. Prepare the SQL query
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery("SELECT * FROM seller WHERE username = '" + user.getText() + "' AND password = '" + pass.getText() + "'");
+            if (rs.next()){
+                seller.currentSeller = new seller(rs.getInt("seller_id"), rs.getString("first_name"), rs.getString("last_name"), rs.getInt("salary"));
+            }
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/listings.fxml"));
 
             if (loader.getLocation() == null) {

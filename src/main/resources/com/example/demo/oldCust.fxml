@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo.OldCust">
+   <children>
+      <VBox layoutX="36.0" layoutY="143.0" prefHeight="114.0" prefWidth="528.0">
+         <children>
+            <HBox prefHeight="27.0" prefWidth="528.0" style="-fx-padding: 10 0;">
+               <children>
+                  <Label prefHeight="26.0" prefWidth="121.0" text="ssn:" textFill="#284b63">
+                     <font>
+                        <Font name="Arial Bold" size="20.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="SSN" blendMode="COLOR_BURN" cache="true" prefHeight="27.0" prefWidth="407.0" style="-fx-border-color: #284B63; -fx-border-radius: 1; -fx-border-width: 0 0 1 0;">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </TextField>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="62.0" prefWidth="528.0">
+               <children>
+                  <Button fx:id="addInvoice" mnemonicParsing="false" onAction="#onClick" onMouseEntered="#hoverIn" onMouseExited="#hoverOut" prefHeight="36.0" prefWidth="212.0" style="-fx-background-color: #284B63; -fx-border-color: #153243; -fx-background-radius: 20; -fx-border-radius: 20;" text="Add invoice" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Arial Bold" size="20.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

@@ -4,15 +4,14 @@ import back.car;
 import back.motorcycle;
 import back.vehicle;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -28,7 +27,6 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 
-import static java.beans.Beans.isInstanceOf;
 import static javafx.scene.shape.StrokeType.OUTSIDE;
 
 public class Listings {
@@ -61,20 +59,20 @@ public class Listings {
         double noi = 1;
         for (vehicle vehicl : vehicles) {
             String model = vehicl.getmodel_name() + " " + vehicl.getyom() + " " + vehicl.gettransmission();
-            Card card = new Card(noi);
+            Card card = new Card(noi, vehicl);
             container.getChildren().add(card.create("Images/porsche.jpg", vehicl.getcompany(), model, vehicl.gethp(), vehicl.getnm(), vehicl.getprice()));
             noi++;
         }
     }
 
-    private ArrayList<vehicle> storeData(){
+    public static ArrayList<vehicle> storeData(){
         String host = "jdbc:mysql://localhost:3306/carshop";
         String username = "root";
         String password = "password";
         try {
             Connection conn = DriverManager.getConnection(host, username, password);
             System.out.println("Connected to MySQL database");
-            String sql = "SELECT type, companies.name, model_name, yom, transmission, hp, nm, price FROM companies join (model join vehicle on model.model_id = vehicle.model_id) on companies.maker_id = model.maker_id";
+            String sql = "SELECT type, company.name, model_name, yom, transmission, hp, nm, price, v_id FROM company join (model join vehicle on model.model_id = vehicle.model_id) on company.maker_id = model.maker_id";
             Statement statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             int i = 1;
@@ -88,10 +86,11 @@ public class Listings {
                 int hp = resultSet.getInt("hp");
                 int nm = resultSet.getInt("nm");
                 int price = resultSet.getInt("price");
+                int v_id = resultSet.getInt("v_id");
                 if(type.equals("Car")){
-                    vehicles.add(new car(company, model_name, yom, transmission, hp, nm, price));
+                    vehicles.add(new car(company, model_name, yom, transmission, hp, nm, price, v_id));
                 } else if (type.equals("Motorcycle")){
-                    vehicles.add(new motorcycle(company, model_name, yom, transmission, hp, nm, price));
+                    vehicles.add(new motorcycle(company, model_name, yom, transmission, hp, nm, price, v_id));
                 }
             }
             resultSet.close();
@@ -146,15 +145,8 @@ public class Listings {
 
 
     public void switchInvoice(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("main7ambola.fxml"));
-
-        // Get the current stage (window)
-        Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-
-        // Set the new scene and show it
-        Scene MainMenu = new Scene(loader.load(), 1080, 600);
-        stage.setScene(MainMenu);
-        stage.show();
+        controler control = new controler();
+        control.switchScrean(event, "main7ambola.fxml", 1080, 600);
     }
 }
 
@@ -168,11 +160,31 @@ class Card{
     private Text price;
     private VBox cardVBox = new VBox();
     private double noi;
+    private vehicle vehicl;
+    public static vehicle vehicl1;
 
-    public Card(double noi){
+    public Card(double noi, vehicle vehicl){
         this.noi = noi;
+        this.vehicl = vehicl;
     }
 
+    private EventHandler<? super MouseEvent> onCardClick(){
+        Card.vehicl1 = this.vehicl;
+        return new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("customer.fxml"));
+                    Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+                    Scene customer = new Scene(loader.load(), 300, 200);
+                    stage.setScene(customer);
+                    stage.show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
 
     public HBox create(String img, String company, String model, int hp, int nm, int price){
         image.setImage(new Image(img));
@@ -208,6 +220,7 @@ class Card{
         this.card.setPrefWidth(600);
         this.card.setStyle("-fx-border-color: #B4B8AB; -fx-background-radius: 20px; -fx-border-radius: 20px; -fx-background-color: white; -fx-padding: 0 20 0 20;");
         this.card.getChildren().addAll(image, cardVBox, this.price);
+        this.card.setOnMouseClicked(this.onCardClick());
         return this.card;
     }
 
