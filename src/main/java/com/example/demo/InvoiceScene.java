@@ -198,6 +198,11 @@ public class InvoiceScene
 //                    deleteInvoiceStmt.setInt(1, com_buyer.getOrder_id());
                     deleteInvoiceStmt.executeUpdate();
                 }
+                String deleteVehSQL = "DELETE FROM vehicle WHERE  v_id = " + com_buyer.getOrder_id()+ ";";
+                try (PreparedStatement deleteVehStmt = conn.prepareStatement(deleteVehSQL)) {
+//                    deleteInvoiceStmt.setInt(1, com_buyer.getOrder_id());
+                    deleteVehStmt.executeUpdate();
+                }
 
 
 
