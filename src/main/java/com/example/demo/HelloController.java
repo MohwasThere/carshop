@@ -121,6 +121,7 @@ public class HelloController {
     }
 
 
+
     public void handleLogin(javafx.event.ActionEvent event) throws IOException, SQLException {
         // Load the second scene (Scene2.fxml)
         SellingPage.clickAnimation(Login);
@@ -149,6 +150,18 @@ public class HelloController {
         }
         else
             System.out.println("SAD SHIT");
+    }
+    public void handEnter() {
+        pass.setOnKeyPressed(event -> {
+            if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
+                try {
+                    handleLogin(new javafx.event.ActionEvent(Login, Login.getParent())); // Simulate the login button click
+                }
+                catch (IOException | SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public void hoverIn(){

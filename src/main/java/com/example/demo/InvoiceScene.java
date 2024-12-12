@@ -10,10 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -49,8 +46,6 @@ public class InvoiceScene
     @FXML
     private TableColumn pot_buy_name;
     @FXML
-    private TableColumn pot_MID;
-    @FXML
     private TableColumn pot_pay;
     @FXML
     private TableColumn pot_SID;
@@ -64,11 +59,14 @@ public class InvoiceScene
     @FXML
     private TableColumn com_buy_name;
     @FXML
-    private TableColumn com_MID;
-    @FXML
     private TableColumn com_pay;
     @FXML
     private TableColumn com_SID;
+
+    @FXML
+    private ChoiceBox choiceBox;
+    @FXML
+    private Button discount;
 
     @FXML
     public void initialize()
@@ -97,7 +95,7 @@ public class InvoiceScene
            try {
                Connection conn = DriverManager.getConnection(host, username, password);
                System.out.println("Connected to MySQL database");
-               String sql = "SELECT  invoice.buyer_ssn, buyer.first_name, buyer.last_name, invoice.order_id, seller.seller_id, vehicle.price FROM vehicle INNER JOIN invoice ON vehicle.v_id = invoice.v_id INNER JOIN buyer ON invoice.buyer_ssn = buyer.buyer_ssn INNER JOIN model ON vehicle.model_id = model.model_id INNER JOIN seller ON invoice.seller_id = seller.seller_id;";
+               String sql = "SELECT  invoice.buyer_ssn, buyer.first_name, buyer.last_name, invoice.order_id, seller.seller_id, invoice.price FROM vehicle INNER JOIN invoice ON vehicle.v_id = invoice.v_id INNER JOIN buyer ON invoice.buyer_ssn = buyer.buyer_ssn INNER JOIN model ON vehicle.model_id = model.model_id INNER JOIN seller ON invoice.seller_id = seller.seller_id;";
                Statement statement = conn.createStatement();
                ResultSet resultSet = statement.executeQuery(sql);
                int i = 1;
@@ -131,7 +129,42 @@ public class InvoiceScene
 
         pot_buyer_table.setItems(list);
 
+        ArrayList<invoice> Fbuyers = storeDataFP();
+        ObservableList<invoice> Flist = FXCollections.observableArrayList(Fbuyers);
+
+        com_buyer_table.setItems(Flist);
+
     }
+
+    public ArrayList<invoice> storeDataFP() throws SQLException{
+        try{
+            Connection conn = DriverManager.getConnection(host, username, password);
+            System.out.println("Connected to MySQL database");
+            String sql = "Select * from Full_purchase";
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            int i = 1;
+            ArrayList<back.invoice> Full_buyers = new ArrayList<>();
+            while(resultSet.next())
+            {
+                int buyer_ssn = resultSet.getInt("buyer_ssn");
+                String name = resultSet.getString("name");
+                int order_id = resultSet.getInt("order_id");
+                int seller_id = resultSet.getInt("seller_id");
+                int price = resultSet.getInt("price");
+                Full_buyers.add(new back.invoice(order_id,buyer_ssn,name,seller_id,price));
+            }
+            resultSet.close();
+            statement.close();
+            conn.close();
+            return Full_buyers;
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+}
 
     public void complete_purchase() throws SQLException {
         invoice com_buyer = (invoice) pot_buyer_table.getSelectionModel().getSelectedItem();
@@ -158,6 +191,7 @@ public class InvoiceScene
                     insertStmt.executeUpdate();
 
                 }
+
 
                 String deleteInvoiceSQL = "DELETE FROM invoice WHERE  order_id = " + com_buyer.getOrder_id()+ ";";
                 try (PreparedStatement deleteInvoiceStmt = conn.prepareStatement(deleteInvoiceSQL)) {
@@ -226,6 +260,30 @@ public class InvoiceScene
         Scene MainMenu = new Scene(loader.load(), 1080, 600);
         stage.setScene(MainMenu);
         stage.show();
+    }
+
+    public void applydiscount(ActionEvent event) throws IOException, SQLException {
+        invoice dis_buyer = (invoice) pot_buyer_table.getSelectionModel().getSelectedItem();
+
+        double discount = 0;
+        if ("5%".equals(choiceBox.getValue())) {
+            discount = 0.05;
+        } else if ("10%".equals(choiceBox.getValue())) {
+            discount = 0.10;
+        }
+
+        Connection conn = DriverManager.getConnection(host,username,password);
+        System.out.println("Connected to MySQL database");
+        String sql = "UPDATE invoice SET price = price * (1 - ?) WHERE order_id = ?;";
+        try (PreparedStatement applydiscount = conn.prepareStatement(sql)) {
+//                    deleteInvoiceStmt.setInt(1, com_buyer.getOrder_id());
+            applydiscount.setDouble(1, discount); // First placeholder is for the discount rate
+            applydiscount.setInt(2, dis_buyer.getOrder_id());
+            applydiscount.executeUpdate();
+        } catch (SQLException ex) {
+            System.err.println("SQL Error: " + ex.getMessage());
+            throw ex;
+        }
     }
 
 

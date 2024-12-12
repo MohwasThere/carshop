@@ -38,7 +38,7 @@
             <InnerShadow blurType="GAUSSIAN" height="10.0" radius="4.5" width="10.0" />
          </effect>
       </TextField>
-      <PasswordField fx:id="pass" layoutX="141.0" layoutY="299.0" minWidth="184.0" prefHeight="41.0" prefWidth="184.0" promptText="Password" style="-fx-background-color: #eee; -fx-border-style: solid; -fx-border-color: #284B63; -fx-border-width: 2px; -fx-padding: 10px 0 10px 15px; -fx-border-radius: 10; -fx-min-width: 200px; -fx-background-radius: 10px;">
+      <PasswordField fx:id="pass" layoutX="141.0" layoutY="299.0" minWidth="184.0" onKeyPressed="#handEnter" prefHeight="41.0" prefWidth="184.0" promptText="Password" style="-fx-background-color: #eee; -fx-border-style: solid; -fx-border-color: #284B63; -fx-border-width: 2px; -fx-padding: 10px 0 10px 15px; -fx-border-radius: 10; -fx-min-width: 200px; -fx-background-radius: 10px;">
 <!--         <cursor>-->
 <!--            <Cursor fx:constant="NONE" />-->
 <!--         </cursor>-->
