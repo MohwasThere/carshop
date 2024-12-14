@@ -54,8 +54,6 @@ public class HelloController {
     @FXML
     private PasswordField pass;
     @FXML
-    private Rectangle rect;
-    @FXML
     private Button Login;
 
 
@@ -126,14 +124,14 @@ public class HelloController {
         // Load the second scene (Scene2.fxml)
         SellingPage.clickAnimation(Login);
         if(checkuser() && checkpass()) {
-            Connection connection = DriverManager.getConnection(host, username, password);
-
-            // 2. Prepare the SQL query
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT * FROM seller WHERE username = '" + user.getText() + "' AND password = '" + pass.getText() + "'");
-            if (rs.next()){
-                seller.currentSeller = new seller(rs.getInt("seller_id"), rs.getString("first_name"), rs.getString("last_name"), rs.getInt("salary"));
-            }
+//            Connection connection = DriverManager.getConnection(host, username, password);
+//
+//            // 2. Prepare the SQL query
+//            Statement statement = connection.createStatement();
+//            ResultSet rs = statement.executeQuery("SELECT * FROM seller WHERE username = '" + user.getText() + "' AND password = '" + pass.getText() + "'");
+//            if (rs.next()){
+//                seller.currentSeller = new seller(rs.getInt("seller_id"), rs.getString("first_name"), rs.getString("last_name"), rs.getInt("salary"));
+//            }
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/listings.fxml"));
 
             if (loader.getLocation() == null) {
@@ -146,10 +144,10 @@ public class HelloController {
             Scene MainMenu = new Scene(loader.load(), 1080, 600);
             stage.setScene(MainMenu);
             stage.show();
-            this.user_name = user.getText();
+            //this.user_name = user.getText();
         }
         else
-            System.out.println("SAD SHIT");
+            System.out.println("Error");
     }
     public void handEnter() {
         pass.setOnKeyPressed(event -> {
